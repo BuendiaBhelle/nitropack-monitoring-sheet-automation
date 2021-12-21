@@ -1,0 +1,19 @@
+{
+  "name": "nitropack",
+  "version": "1.0.0",
+  "description": "automation for monitoring issues for wpm monitoring sheet",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Maribel L. Buendia",
+  "license": "ISC",
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "dotenv": "^10.0.0",
+    "googleapis": "^92.0.0",
+    "path": "^0.12.7",
+    "selenium-appium": "^1.0.2",
+    "selenium-webdriver": "^4.1.0"
+  }
+}
