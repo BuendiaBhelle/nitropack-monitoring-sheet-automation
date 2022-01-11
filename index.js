@@ -80,50 +80,134 @@ writeToGoogleSheets();
 
 
 async function monitoringNitropack() {
+    const auth = new google.auth.GoogleAuth({
+        keyFile: "credentials.json",
+        scopes: "https://www.googleapis.com/auth/spreadsheets"
+    });
+
+    const client = await auth.getClient();
+    const googleSheets = google.sheets({ version: "v4", auth: client })
+    const spreadsheetId = process.env.SPREADSHEETID;
+
     let driver = await new Builder().forBrowser("chrome").build();
+    
+    const urls = [
+        "https://www.collisioncenternorthscottsdale.com/",
+        "https://www.sunrisejewelryusa.com/",
+        "https://www.americanleatherusa.com/",
+        "https://www.primeview.com/",
+        "https://www.biltmoreloanandjewelry.com/",
+        "https://www.lignans.net/",
+        "https://www.newhopemedicalcenter.com/",
+        "https://www.freddabranyon.com/",
+        "https://www.everythingjustrocks.com/",
+    ]
 
-    // ACC
-    await driver.get("https://developers.google.com/speed/pagespeed/insights/");
-    await driver.findElement(By.name("url")).sendKeys("https://www.collisioncenternorthscottsdale.com/", Key.RETURN);
+    for (let index = 0; index < urls.length; index++) {
+        await driver.get("https://developers.google.com/speed/pagespeed/insights/");
+        await driver.findElement(By.name("url")).sendKeys(urls[index], Key.RETURN);
+        
+        await driver.sleep(40000);
 
-    // SJ
-    await driver.switchTo().newWindow('tab');
-    await driver.get("https://developers.google.com/speed/pagespeed/insights/");
-    await driver.findElement(By.name("url")).sendKeys("https://www.sunrisejewelryusa.com/", Key.RETURN);
+        await driver.executeScript("return document.getElementsByClassName('VfPpkd-YVzG2b')[0].click()");
 
-    // AL
-    await driver.switchTo().newWindow('tab');
-    await driver.get("https://developers.google.com/speed/pagespeed/insights/");
-    await driver.findElement(By.name("url")).sendKeys("https://www.americanleatherusa.com/", Key.RETURN);
+        const score_length = await driver.executeScript("return document.getElementsByClassName('lh-gauge__percentage').length");
 
-    // PV
-    await driver.switchTo().newWindow('tab');
-    await driver.get("https://developers.google.com/speed/pagespeed/insights/");
-    await driver.findElement(By.name("url")).sendKeys("https://www.primeview.com/", Key.RETURN);
+        console.log("IN DESKTOP.");
 
-    // BLJ
-    await driver.switchTo().newWindow('tab');
-    await driver.get("https://developers.google.com/speed/pagespeed/insights/");
-    await driver.findElement(By.name("url")).sendKeys("https://www.biltmoreloanandjewelry.com/", Key.RETURN);
+        console.log(urls[index]);
 
-    // LIGNANS
-    await driver.switchTo().newWindow('tab');
-    await driver.get("https://developers.google.com/speed/pagespeed/insights/");
-    await driver.findElement(By.name("url")).sendKeys("https://www.lignans.net/", Key.RETURN);
+        for (let i = 0; i < score_length; i++) {
+            const score_desktop = await driver.executeScript("return document.getElementsByClassName('lh-gauge__percentage')[" + i + "].innerText");
+            
+            if (score_desktop != "") {
+                console.log("Desktop: " + score_desktop);
 
-    // NHU
-    await driver.switchTo().newWindow('tab');
-    await driver.get("https://developers.google.com/speed/pagespeed/insights/");
-    await driver.findElement(By.name("url")).sendKeys("https://www.newhopemedicalcenter.com/", Key.RETURN);
+                let ranges_desktop = [
+                    "ACC!D4",
+                    "SJ!D4",
+                    "AL!D4",
+                    "PV!D4",
+                    "BLJ!D4",
+                    "Lignans!D4",
+                    "NHU!D4",
+                    "Fredda Branyon!D4",
+                    "EJR!D4",
+                ]
 
-    // FREDDA BRANYON
-    await driver.switchTo().newWindow('tab');
-    await driver.get("https://developers.google.com/speed/pagespeed/insights/");
-    await driver.findElement(By.name("url")).sendKeys("https://www.freddabranyon.com/", Key.RETURN);
+                let values = [
+                    [
+                        score_desktop
+                    ],
+                ];
+            
+                const resource_desktop = {
+                    values,
+                };
 
-    // EJR
-    await driver.switchTo().newWindow('tab');
-    await driver.get("https://developers.google.com/speed/pagespeed/insights/");
-    await driver.findElement(By.name("url")).sendKeys("https://www.everythingjustrocks.com/", Key.RETURN);
+                const range_desktop = ranges_desktop[index];
+            
+                await googleSheets.spreadsheets.values.append({
+                    auth,
+                    spreadsheetId,
+                    range: range_desktop,
+                    valueInputOption: "USER_ENTERED",
+                    resource: resource_desktop
+                });               
+            }
+        }
+
+        await driver.sleep(10000);
+
+        await driver.executeScript("return document.getElementsByClassName('VfPpkd-YVzG2b')[1].click()");
+
+        console.log("IN MOBILE.");
+
+        console.log(urls[index]);
+
+        for (let j = 0; j < score_length; j++) {
+            const score_mobile = await driver.executeScript("return document.getElementsByClassName('lh-gauge__percentage')[" + j + "].innerText");
+            
+            if (score_mobile != "") {
+                console.log("Mobile: " + score_mobile);
+
+                let ranges_mobile = [
+                    "ACC!E4",
+                    "SJ!E4",
+                    "AL!E4",
+                    "PV!E4",
+                    "BLJ!E4",
+                    "Lignans!E4",
+                    "NHU!E4",
+                    "Fredda Branyon!E4",
+                    "EJR!E4",
+                ]
+
+                let values = [
+                    [
+                        score_mobile
+                    ],
+                ];
+            
+                const resource_mobile = {
+                    values,
+                };
+
+                const range_mobile = ranges_mobile[index];
+            
+                await googleSheets.spreadsheets.values.append({
+                    auth,
+                    spreadsheetId,
+                    range: range_mobile,
+                    valueInputOption: "USER_ENTERED",
+                    resource: resource_mobile
+                });               
+            }
+        }
+
+        await driver.sleep(3000);
+
+        await driver.switchTo().newWindow('tab');
+    }
 }
 monitoringNitropack();
