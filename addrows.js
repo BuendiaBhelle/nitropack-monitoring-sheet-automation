@@ -20,6 +20,7 @@ async function insertRow() {
     //NHU - 1557671517
     //Fredda Branyon - 7802066
     //EJR - 1988369747
+    // JFJ - 2001892666
 
     let sites = [
         1844108131,
@@ -30,7 +31,8 @@ async function insertRow() {
         898317464,
         1557671517,
         7802066,
-        1988369747
+        1988369747,
+        2001892666
     ]
 
     for (let index = 0; index < sites.length; index++) {
@@ -60,5 +62,7 @@ async function insertRow() {
             }
         });
     }  
+
+
 }
 insertRow();

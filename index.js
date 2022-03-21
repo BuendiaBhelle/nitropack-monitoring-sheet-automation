@@ -40,6 +40,7 @@ async function writeToGoogleSheets() {
         "https://www.newhopemedicalcenter.com/",
         "https://www.freddabranyon.com/",
         "https://www.everythingjustrocks.com/",
+        "https://www.judefrances.com/"
     ]
     
     for (let index = 0; index < urls.length; index++) {
@@ -53,6 +54,7 @@ async function writeToGoogleSheets() {
             "NHU!A4:C4",
             "Fredda Branyon!A4:C4",
             "EJR!A4:C4",
+            "JFJ!A4:C4"
         ]
 
         let values = [
