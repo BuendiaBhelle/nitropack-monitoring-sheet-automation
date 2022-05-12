@@ -1,6 +1,7 @@
 const {google} = require("googleapis");
 const {Builder, By, Key, util} = require("selenium-webdriver");
 require('dotenv').config();
+const config = require("./config");
 
 async function writeToGoogleSheets() {
     const auth = new google.auth.GoogleAuth({
@@ -14,21 +15,6 @@ async function writeToGoogleSheets() {
 
     const driver = await new Builder().forBrowser("chrome").build();
     const pagespeed_url = "https://developers.google.com/speed/pagespeed/insights/";
-
-    const monthNames = [01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12];
-    const dateObj = new Date();
-    const month = monthNames[dateObj.getMonth()];
-    const day = String(dateObj.getDate()).padStart(2, '0');
-    const year = dateObj.getFullYear();
-    const output = month  + "/" + day  + '/' + year;
-    
-    var hours = dateObj.getHours();
-    var minutes = dateObj.getMinutes();
-    var ampm = hours >= 12 ? 'pm' : 'am';
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    minutes = minutes < 10 ? '0'+minutes : minutes;
-    var strTime = hours + ':' + minutes + ' ' + ampm;
 
     const urls = [
         "https://www.collisioncenternorthscottsdale.com/",
@@ -60,8 +46,8 @@ async function writeToGoogleSheets() {
         let values = [
             [
                 urls[index],
-                output,
-                strTime
+                config.output,
+                config.strTime
             ],
         ];
 
